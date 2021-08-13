@@ -21,7 +21,15 @@ typedef struct Ball{
     int hits;
 } Ball;
 
+typedef struct Player{
+    Vector2 position;
+    float speed;
+} Player;
+
 Ball ball = {0};
+Player player = {0};
+
+Rectangle playerRec = {0};
 
 int gameStart() {
     init();
@@ -32,35 +40,48 @@ int gameStart() {
 
 void init() {
 
-    SetTargetFPS(60);
+    SetTargetFPS(FPS);
 
     InitWindow(screenWidth, screenHeight, "Pong!");
+
     ball.position.x = 100.0f;
     ball.position.y = 100.0f;
-
     ball.velocity.x = 3.0f;
     ball.velocity.y = 3.0f;
-
     ball.radius = radius;
+
+    player.position.x = 30;
+    player.position.y = screenHeight/2- 75;
+    player.speed = 5;
+
+    playerRec.width = 25;
+    playerRec.height = 150;
 }
 
 void gameLoop() {
-
     while (!WindowShouldClose()){
         gameUpdate();
-        BeginDrawing();
-
         gameDraw();
-
     }
 }
 
-
 void gameUpdate() {
     float deltaTime = GetFrameTime();
-
+    playerRec.x = player.position.x;
+    playerRec.y = player.position.y;
     ball.position.x += ball.velocity.x * (deltaTime * FPS);
     ball.position.y += ball.velocity.y * (deltaTime * FPS);
+
+    if (ball.position.x <= 60 && CheckCollisionCircleRec(ball.position, ball.radius, playerRec)){
+        ball.velocity.x = -ball.velocity.x;
+        ball.hits++;
+        if (ball.position.y < player.position.y+25 && ball.velocity.y > 0){
+            ball.velocity.y = -ball.velocity.y;
+        }else if (ball.position.y > player.position.y+125 && ball.velocity.y < 0)
+        {
+            ball.velocity.y = -ball.velocity.y;
+        }
+    }
 
     if (ball.position.x < radius || ball.position.x > screenWidth - radius){
         ball.velocity.x = -ball.velocity.x;
@@ -73,6 +94,14 @@ void gameUpdate() {
         ball.position.y = clampF(radius, ball.position.y, screenHeight - radius);
     }
 
+    if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)){
+        player.position.y += player.speed * (deltaTime * FPS);
+    } else if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)){
+        player.position.y -= player.speed * (deltaTime * FPS);
+    }
+
+    player.position.y = clampF(0, player.position.y, screenHeight - 150);
+
     if (ball.hits >= 5){
         ball.velocity.x < 0 ? ball.velocity.x--: ball.velocity.x++;
         ball.velocity.y < 0 ? ball.velocity.y-- : ball.velocity.y++;
@@ -82,10 +111,13 @@ void gameUpdate() {
 }
 
 void gameDraw() {
+    BeginDrawing();
+
+
+
     ClearBackground(RAYWHITE);
-
     DrawCircleV(ball.position, ball.radius, PINK);
-
+    DrawRectangleRec(playerRec, RED);
     EndDrawing();
 }
 
