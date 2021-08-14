@@ -12,4 +12,5 @@ static const int SCREEN_HEIGHT = 720;
 static const int FPS = 60;
 
 static const int BAT_HEIGHT = 150;
+static const int BAT_WIDTH = 25;
 static const float RADIUS = 20.0f;
