@@ -22,6 +22,7 @@ void updateBall(Ball *ball, float deltaTime) {
     if (ball->position.y < ball->radius || ball->position.y > SCREEN_HEIGHT - ball->radius){
         ball->velocity.y = -ball->velocity.y;
         ball->hits++;
+        PlaySound(ball->hitFX[GetRandomValue(0,1)]);
         ball->position.y = clampF(ball->radius, ball->position.y, SCREEN_HEIGHT - ball->radius);
     }
 
@@ -36,6 +37,7 @@ void checkHit(Ball *ball, Rectangle rec) {
     if (CheckCollisionCircleRec(ball->position, ball->radius, rec)){
         ball->velocity.x = -ball->velocity.x;
         ball->hits++;
+        PlaySound(ball->hitFX[GetRandomValue(0,1)]);
         // If ball hits edge of bat bounce away
         if (ball->position.y < rec.y+BAT_HEIGHT/6 && ball->velocity.y > 0){
             ball->velocity.y = -ball->velocity.y;

@@ -38,6 +38,9 @@ Rectangle enemyRec = {0};
 char score[10];
 int textLen;
 
+Sound playerGoal;
+Sound enemyGoal;
+
 int gameStart() {
     init();
     gameLoop();
@@ -50,10 +53,13 @@ void init() {
     SetTargetFPS(FPS);
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Pong!");
+    InitAudioDevice();
 
     initBall(&ball);
 
     ball.radius = RADIUS;
+    ball.hitFX[0] = LoadSound("assets/Hit1.wav");
+    ball.hitFX[1] = LoadSound("assets/Hit2.wav");
 
     player.position.x = BAT_WIDTH + 5;
     player.position.y = SCREEN_HEIGHT / 2 - BAT_HEIGHT / 2;
@@ -70,6 +76,9 @@ void init() {
 
     sprintf(score, "%02d     %02d", playerScore, enemyScore);
     textLen = MeasureText(score, 100);
+
+    playerGoal = LoadSound("assets/player_goal.wav");
+    enemyGoal = LoadSound("assets/enemy_goal.wav");
 }
 
 void gameLoop() {
@@ -102,12 +111,14 @@ void checkScore() {
     if (ball.position.x < ball.radius) {
         ball.hits = 0;
         enemyScore++;
+        PlaySound(enemyGoal);
         initBall(&ball);
     }
 
     if (ball.position.x > SCREEN_WIDTH - ball.radius){
         ball.hits = 0;
         playerScore ++;
+        PlaySound(playerGoal);
         initBall(&ball);
     }
 }
@@ -156,6 +167,7 @@ void gameDraw() {
 
 void end() {
     CloseWindow();
+    CloseAudioDevice();
 }
 
 

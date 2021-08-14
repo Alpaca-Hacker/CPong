@@ -33,5 +33,14 @@ endif()
 add_executable(${PROJECT_NAME} main.c game.c ball.c headers/ball.h headers/game.h headers/constants.h utility.c headers/utility.h)
 #set(raylib_VERBOSE 1)
 target_link_libraries(${PROJECT_NAME} raylib)
+add_dependencies(${PROJECT_NAME} copy-files)
+
+add_custom_target(copy-files ALL
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/assets
+        ${CMAKE_BINARY_DIR}/assets
+        )
+
+
 
 

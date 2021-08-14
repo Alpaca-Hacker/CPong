@@ -12,6 +12,7 @@ typedef struct Ball{
     Vector2 velocity;
     float radius;
     int hits;
+    Sound hitFX[2];
 } Ball;
 
 void initBall(struct Ball *ball);
